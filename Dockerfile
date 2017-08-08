@@ -11,5 +11,5 @@ RUN pip install -r requirements.txt
 # Bundle app source
 COPY . /usr/src/app
 
-EXPOSE 9004
+EXPOSE 9013
 CMD [ "python", "main.py" ]

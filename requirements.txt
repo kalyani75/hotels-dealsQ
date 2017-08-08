@@ -1,3 +1,4 @@
+mysql-python
 Flask==0.10.1
 Flask-Cors==3.0.2
-redis==2.10.5
+Flask-SQLAlchemy==2.1
