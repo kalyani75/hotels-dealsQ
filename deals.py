@@ -4,7 +4,7 @@ import json
 import sys
 import time
 
-import traceback
+import logging
 from collections import defaultdict
 
 from flask import Blueprint, jsonify, request, url_for, make_response, abort
@@ -90,7 +90,7 @@ def createdeal():
   try:
     db.session.commit()
   except Exception as err:
-    traceback.print_tb(err.message)  
+    logging.exception("Here we are!!!")  
     db.session.rollback()
 
   db.session.close()    
