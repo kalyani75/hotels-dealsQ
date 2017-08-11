@@ -88,7 +88,8 @@ def createdeal():
 
   try:
     db.session.commit()
-  except:
+  except Exception, e:
+    print str(e)
     db.session.rollback()
     
   db.session.close()    
