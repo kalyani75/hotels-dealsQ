@@ -89,6 +89,7 @@ def createdeal():
   try:
     db.session.commit()
   except Exception, e:
+    print 'Exception'
     print str(e)
     db.session.rollback()
     
