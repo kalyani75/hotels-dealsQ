@@ -90,7 +90,7 @@ def createdeal():
   try:
     db.session.commit()
   except Exception as err:
-    traceback.print_tb(err.__traceback__)  
+    traceback.print_tb(err.message)  
     db.session.rollback()
 
   db.session.close()    
