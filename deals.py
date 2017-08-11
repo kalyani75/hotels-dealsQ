@@ -4,6 +4,7 @@ import json
 import sys
 import time
 
+import traceback
 from collections import defaultdict
 
 from flask import Blueprint, jsonify, request, url_for, make_response, abort
@@ -88,10 +89,9 @@ def createdeal():
 
   try:
     db.session.commit()
-  except Exception, e:
-    print 'Exception'
-    print str(e)
+  except Exception as err:
+    traceback.print_tb(err.__traceback__)  
     db.session.rollback()
-    
+
   db.session.close()    
   return jsonify({ 'deal': deal }), 201  
