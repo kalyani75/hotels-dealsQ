@@ -87,6 +87,4 @@ def createdeal():
   db.session.add(newdeal);
 
   db.session.commit()
-  db.session.remove()
-
   return jsonify({ 'deal': deal }), 201  
