@@ -43,7 +43,7 @@ def getdeals(sessionid):
 
     deals.append(deal)
 
-  db.session.remove()
+  db.session.close()
   return deals
 
 @deals.route('/api/v1.0/deals/alldeals', methods=['GET'])
@@ -84,7 +84,12 @@ def createdeal():
   }
   print deal
   newdeal = dealsmodel(deal['id'], deal['agency'], deal['hotelid'], deal['roomtype'], deal['fromdt'], deal['todt'], deal['price'], deal['active'])
-  db.session.add(newdeal);
+  db.session.add(newdeal)
 
-  db.session.commit()
+  try:
+    db.session.commit()
+  except DatabaseError:
+    db.session.rollback()
+    
+  db.session.close()    
   return jsonify({ 'deal': deal }), 201  
