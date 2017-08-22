@@ -4,7 +4,9 @@ import json
 from flask import Flask
 from flask_cors import CORS
 
+import redis
 from flask_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__)
 
 from deals import deals
@@ -13,20 +15,30 @@ app.register_blueprint(deals, url_prefix='/hotels.com')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+mqpool = None
 if 'VCAP_SERVICES' in os.environ: 
   vcap_services = json.loads(os.environ['VCAP_SERVICES'])
 
   uri = ''
+  urimq = ''
+
   for key, value in vcap_services.iteritems():   # iter on both keys and values
 	  if key.find('mysql') > 0 or key.find('cleardb') >= 0:
 	    mysql_info = vcap_services[key][0]
 		
 	    cred = mysql_info['credentials']
 	    uri = cred['uri'].encode('utf8').replace('?reconnect=true', '')
+	  elif key.find('redis') > 0:
+	    redis_info = vcap_services[key][0]
+		
+	    cred = redis_info['credentials']
+	    urimq = cred['uri'].encode('utf8')
   
   app.config['SQLALCHEMY_DATABASE_URI'] = uri 
+  mqpool  = redis.ConnectionPool.from_url(urimq + '/0') 
 else:
   app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@mysql:3306/sys'
+  mqpool = redis.ConnectionPool(host=os.getenv('MQ_HOST', 'localhost'), port=os.getenv('MQ_PORT', 6379), db=0)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -54,7 +66,7 @@ class dealsmodel(db.Model):
     self.active = active
 
 class searchqueue(db.Model):
-  __tablename__ = "searchqueue"
+  __tablename__ = "searchqueuedeals"
 
   id = db.Column(db.Integer, primary_key = True)
   sessionid = db.Column(db.String(512))

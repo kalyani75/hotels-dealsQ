@@ -6,3 +6,4 @@ applications:
   host: dealsquery
   services:
   - redis
+  - mysql
