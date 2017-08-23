@@ -37,7 +37,7 @@ if 'VCAP_SERVICES' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = uri 
   mqpool  = redis.ConnectionPool.from_url(urimq + '/0') 
 else:
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@mysql:3306/sys'
+  app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('MYSQL_URI', 'mysql://root:password@mysql:3306/sys')
   mqpool = redis.ConnectionPool(host=os.getenv('MQ_HOST', 'localhost'), port=os.getenv('MQ_PORT', 6379), db=0)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
